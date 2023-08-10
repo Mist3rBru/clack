@@ -833,3 +833,36 @@ export const tasks = async (tasks: Task[]) => {
 		s.stop(result || task.title);
 	}
 };
+
+class PromptBuilder<TResults extends Record<string, unknown> = {}> {
+	private results = {} as TResults;
+
+	add<TKey extends string, TResult extends Promise<unknown>>(
+		key: TKey extends keyof TResults ? never : TKey,
+		prompt: (data: { results: Prettify<PromptGroupAwaitedReturn<TResults>> }) => TResult
+	): PromptBuilder<
+		{
+			[Key in keyof TResults]: Key extends TKey ? TResult : TResults[Key];
+		} & {
+			[Key in TKey]: TResult;
+		}
+	> {
+		// @ts-ignore
+		this.results[key] = prompt;
+		// @ts-ignore
+		return this;
+	}
+
+	async run(): Promise<Prettify<PromptGroupAwaitedReturn<TResults>>> {
+		for (const [key, prompt] of Object.entries(this.results)) {
+			// @ts-ignore
+			this.results[key] = await prompt({ results: this.results });
+		}
+		// @ts-ignore
+		return this.results;
+	}
+}
+
+export const builder = () => {
+	return new PromptBuilder();
+};
