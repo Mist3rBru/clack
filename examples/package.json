@@ -13,7 +13,7 @@
     "spinner": "jiti ./spinner.ts",
     "spinner-ci": "npx cross-env CI=\"true\" jiti ./spinner-ci.ts",
     "changesets": "jiti ./changesets.ts",
-    "builder": "jiti ./builder.ts"
+    "workflow": "jiti ./workflow.ts"
   },
   "devDependencies": {
     "jiti": "^1.17.0"
