@@ -24,37 +24,21 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.2.2)
 
-  examples/basic:
+  examples:
     dependencies:
       '@clack/core':
         specifier: workspace:*
-        version: link:../../packages/core
+        version: link:../packages/core
       '@clack/prompts':
         specifier: workspace:*
-        version: link:../../packages/prompts
+        version: link:../packages/prompts
       picocolors:
         specifier: ^1.0.0
-        version: 1.0.0
+        version: 1.1.1
     devDependencies:
       jiti:
         specifier: ^1.17.0
-        version: 1.17.0
-
-  examples/changesets:
-    dependencies:
-      '@clack/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@clack/prompts':
-        specifier: workspace:*
-        version: link:../../packages/prompts
-      picocolors:
-        specifier: ^1.0.0
-        version: 1.0.0
-    devDependencies:
-      jiti:
-        specifier: ^1.17.0
-        version: 1.17.0
+        version: 1.21.6
 
   packages/core:
     dependencies:
@@ -1681,10 +1665,6 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
-
-  jiti@1.17.0:
-    resolution: {integrity: sha512-CByzPgFqYoB9odEeef7GNmQ3S5THIBOtzRYoSCya2Sv27AuQxy2jgoFjQ6VTF53xsq1MXRm+YWNvOoDHUAteOw==}
-    hasBin: true
 
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
@@ -4293,8 +4273,6 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  jiti@1.17.0: {}
-
   jiti@1.21.6: {}
 
   jiti@2.4.0: {}
@@ -5189,7 +5167,7 @@ snapshots:
       cac: 6.7.14
       debug: 4.3.7
       pathe: 1.1.2
-      picocolors: 1.0.0
+      picocolors: 1.1.1
       vite: 5.4.11(@types/node@18.16.0)
     transitivePeerDependencies:
       - '@types/node'
@@ -5225,7 +5203,7 @@ snapshots:
       local-pkg: 0.5.1
       magic-string: 0.30.13
       pathe: 1.1.2
-      picocolors: 1.0.0
+      picocolors: 1.1.1
       std-env: 3.8.0
       strip-literal: 2.1.0
       tinybench: 2.9.0
