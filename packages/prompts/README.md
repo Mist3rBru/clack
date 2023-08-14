@@ -192,7 +192,7 @@ log.message('Hello, World', { symbol: color.cyan('~') });
 
 ### Workflow
 
-Just like `group`, but on builder way, so you can choose which one fits better.
+Works just like `group` but infer types way better and treats your group like a workflow, allowing you to create conditional steps (forks) along the process.
 
 ```js
 import * as p from '@clack/prompts';
@@ -223,26 +223,29 @@ const results = await p
   )
   .step('fork', ({ results }) => {
     if (results.install === true) {
-      return p.workflow().step('package', () =>
-        p.select({
-          message: 'Pick a package manager:',
-          initialValue: 'pnpm',
-          options: [
-            {
-              label: 'npm',
-              value: 'npm',
-            },
-            {
-              label: 'yarn',
-              value: 'yarn',
-            },
-            {
-              label: 'pnpm',
-              value: 'pnpm',
-            },
-          ],
-        })
-      ).run();
+      return p
+        .workflow()
+        .step('package', () =>
+          p.select({
+            message: 'Pick a package manager:',
+            initialValue: 'pnpm',
+            options: [
+              {
+                label: 'npm',
+                value: 'npm',
+              },
+              {
+                label: 'yarn',
+                value: 'yarn',
+              },
+              {
+                label: 'pnpm',
+                value: 'pnpm',
+              },
+            ],
+          })
+        )
+        .run();
     }
   })
   .onCancel(() => {
