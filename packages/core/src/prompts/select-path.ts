@@ -1,5 +1,6 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
+import type { Key } from 'node:readline';
 import Prompt, { PromptOptions } from './prompt';
 
 interface PathNode {
@@ -130,9 +131,15 @@ export default class SelectPathPrompt extends Prompt {
 		this.currentOption = initialLayer[0];
 		this.onlyShowDir = opts.onlyShowDir ?? false;
 
-		this.on('key', () => {
-			this.value = this.value.replace(opts.initialValue, '');
-			this._search(this.value);
+		this.on('key', (char: string, key: Key | undefined) => {
+			if (key?.name === 'home') {
+				this._changeCursor(0);
+			} else if (key?.name === 'end') {
+				this._changeCursor(this.currentLayer.length - 1);
+			} else {
+				this.value = this.value.replace(opts.initialValue, '');
+				this._search(this.value);
+			}
 		});
 
 		this.on('cursor', (key) => {
