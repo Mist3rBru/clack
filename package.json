@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @clack/examples run start",
     "stub": "pnpm -r run build --stub",
     "build": "pnpm --filter \"@clack/*\" run build",
     "start": "pnpm run dev",

@@ -1,5 +1,5 @@
 {
-  "name": "@clack/examples",
+  "name": "@example/basic",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,6 @@
   },
   "scripts": {
     "start": "jiti ./index.ts",
-    "basic": "jiti ./basic.ts",
     "spinner": "jiti ./spinner.ts",
     "spinner-ci": "npx cross-env CI=\"true\" jiti ./spinner-ci.ts",
     "changesets": "jiti ./changesets.ts",
