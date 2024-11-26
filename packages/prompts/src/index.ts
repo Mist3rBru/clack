@@ -11,52 +11,52 @@ import {
 	block,
 	isCancel,
 	strLength,
-} from "@clack/core";
-import isUnicodeSupported from "is-unicode-supported";
-import color from "picocolors";
-import { cursor, erase } from "sisteransi";
+} from '@clack/core';
+import isUnicodeSupported from 'is-unicode-supported';
+import color from 'picocolors';
+import { cursor, erase } from 'sisteransi';
 
-export { isCancel, setGlobalAliases } from "@clack/core";
+export { isCancel, setGlobalAliases } from '@clack/core';
 
 const unicode = isUnicodeSupported();
 const s = (c: string, fallback: string) => (unicode ? c : fallback);
 
-const S_STEP_ACTIVE = s("◆", "*");
-const S_STEP_CANCEL = s("■", "x");
-const S_STEP_ERROR = s("▲", "x");
-const S_STEP_SUBMIT = s("◇", "o");
+const S_STEP_ACTIVE = s('◆', '*');
+const S_STEP_CANCEL = s('■', 'x');
+const S_STEP_ERROR = s('▲', 'x');
+const S_STEP_SUBMIT = s('◇', 'o');
 
-const S_BAR_START = s("┌", "T");
-const S_BAR = s("│", "|");
-const S_BAR_END = s("└", "—");
+const S_BAR_START = s('┌', 'T');
+const S_BAR = s('│', '|');
+const S_BAR_END = s('└', '—');
 
-const S_RADIO_ACTIVE = s("●", ">");
-const S_RADIO_INACTIVE = s("○", " ");
-const S_CHECKBOX_ACTIVE = s("◻", "[•]");
-const S_CHECKBOX_SELECTED = s("◼", "[+]");
-const S_CHECKBOX_INACTIVE = s("◻", "[ ]");
-const S_PASSWORD_MASK = s("▪", "•");
+const S_RADIO_ACTIVE = s('●', '>');
+const S_RADIO_INACTIVE = s('○', ' ');
+const S_CHECKBOX_ACTIVE = s('◻', '[•]');
+const S_CHECKBOX_SELECTED = s('◼', '[+]');
+const S_CHECKBOX_INACTIVE = s('◻', '[ ]');
+const S_PASSWORD_MASK = s('▪', '•');
 
-const S_BAR_H = s("─", "-");
-const S_CORNER_TOP_RIGHT = s("╮", "+");
-const S_CONNECT_LEFT = s("├", "+");
-const S_CORNER_BOTTOM_RIGHT = s("╯", "+");
+const S_BAR_H = s('─', '-');
+const S_CORNER_TOP_RIGHT = s('╮', '+');
+const S_CONNECT_LEFT = s('├', '+');
+const S_CORNER_BOTTOM_RIGHT = s('╯', '+');
 
-const S_INFO = s("●", "•");
-const S_SUCCESS = s("◆", "*");
-const S_WARN = s("▲", "!");
-const S_ERROR = s("■", "x");
+const S_INFO = s('●', '•');
+const S_SUCCESS = s('◆', '*');
+const S_WARN = s('▲', '!');
+const S_ERROR = s('■', 'x');
 
 const symbol = (state: State) => {
 	switch (state) {
-		case "initial":
-		case "active":
+		case 'initial':
+		case 'active':
 			return color.cyan(S_STEP_ACTIVE);
-		case "cancel":
+		case 'cancel':
 			return color.red(S_STEP_CANCEL);
-		case "error":
+		case 'error':
 			return color.yellow(S_STEP_ERROR);
-		case "submit":
+		case 'submit':
 			return color.green(S_STEP_SUBMIT);
 	}
 };
@@ -70,9 +70,7 @@ interface LimitOptionsParams<TOption> {
 	style: (option: TOption, active: boolean) => string;
 }
 
-const limitOptions = <TOption>(
-	params: LimitOptionsParams<TOption>
-): string[] => {
+const limitOptions = <TOption>(params: LimitOptionsParams<TOption>): string[] => {
 	const { cursor, options, style } = params;
 
 	const paramMaxItems = params.maxItems ?? Number.POSITIVE_INFINITY;
@@ -82,19 +80,14 @@ const limitOptions = <TOption>(
 	let slidingWindowLocation = 0;
 
 	if (cursor >= slidingWindowLocation + maxItems - 3) {
-		slidingWindowLocation = Math.max(
-			Math.min(cursor - maxItems + 3, options.length - maxItems),
-			0
-		);
+		slidingWindowLocation = Math.max(Math.min(cursor - maxItems + 3, options.length - maxItems), 0);
 	} else if (cursor < slidingWindowLocation + 2) {
 		slidingWindowLocation = Math.max(cursor - 2, 0);
 	}
 
-	const shouldRenderTopEllipsis =
-		maxItems < options.length && slidingWindowLocation > 0;
+	const shouldRenderTopEllipsis = maxItems < options.length && slidingWindowLocation > 0;
 	const shouldRenderBottomEllipsis =
-		maxItems < options.length &&
-		slidingWindowLocation + maxItems < options.length;
+		maxItems < options.length && slidingWindowLocation + maxItems < options.length;
 
 	return options
 		.slice(slidingWindowLocation, slidingWindowLocation + maxItems)
@@ -102,13 +95,13 @@ const limitOptions = <TOption>(
 			const isTopLimit = i === 0 && shouldRenderTopEllipsis;
 			const isBottomLimit = i === arr.length - 1 && shouldRenderBottomEllipsis;
 			return isTopLimit || isBottomLimit
-				? color.dim("...")
+				? color.dim('...')
 				: style(option, i + slidingWindowLocation === cursor);
 		});
 };
 
 interface ThemeParams {
-	ctx: Omit<Prompt, "prompt">;
+	ctx: Omit<Prompt, 'prompt'>;
 	message: string;
 	value: string;
 	valueWithCursor: string | undefined;
@@ -129,16 +122,16 @@ function applyTheme(data: ThemeParams): string {
 				start: color.gray(S_BAR),
 			},
 		}),
-	].join("\n");
+	].join('\n');
 
 	const placeholder = data.placeholder
 		? color.inverse(data.placeholder[0]) + color.dim(data.placeholder.slice(1))
-		: color.inverse(color.hidden("_"));
+		: color.inverse(color.hidden('_'));
 
-	const value = data.value ?? "";
+	const value = data.value ?? '';
 
 	switch (ctx.state) {
-		case "cancel":
+		case 'cancel':
 			return [
 				title,
 				format(value, {
@@ -147,9 +140,11 @@ function applyTheme(data: ThemeParams): string {
 						style: (line) => color.strikethrough(color.dim(line)),
 					},
 				}),
-			].join("\n");
+			]
+				.filter(Boolean)
+				.join('\n');
 
-		case "error":
+		case 'error':
 			return [
 				title,
 				format(value, {
@@ -167,9 +162,9 @@ function applyTheme(data: ThemeParams): string {
 							start: color.yellow(S_BAR_END),
 						},
 					}),
-			].join("\n");
+			].join('\n');
 
-		case "submit":
+		case 'submit':
 			return [
 				title,
 				format(value, {
@@ -178,7 +173,7 @@ function applyTheme(data: ThemeParams): string {
 						style: color.dim,
 					},
 				}),
-			].join("\n");
+			].join('\n');
 
 		default:
 			return [
@@ -191,18 +186,13 @@ function applyTheme(data: ThemeParams): string {
 						start: color.cyan(S_BAR),
 					},
 				}),
-				format(
-					data.placeholder && !data.value
-						? placeholder
-						: data.valueWithCursor ?? value,
-					{
-						default: {
-							start: color.cyan(S_BAR),
-						},
-					}
-				),
+				format(data.placeholder && !data.value ? placeholder : (data.valueWithCursor ?? value), {
+					default: {
+						start: color.cyan(S_BAR),
+					},
+				}),
 				color.cyan(S_BAR_END),
-			].join("\n");
+			].join('\n');
 	}
 }
 
@@ -258,8 +248,8 @@ export interface ConfirmOptions {
 	initialValue?: boolean;
 }
 export const confirm = (opts: ConfirmOptions) => {
-	const active = opts.active ?? "Yes";
-	const inactive = opts.inactive ?? "No";
+	const active = opts.active ?? 'Yes';
+	const inactive = opts.inactive ?? 'No';
 	return new ConfirmPrompt({
 		active,
 		inactive,
@@ -274,14 +264,11 @@ export const confirm = (opts: ConfirmOptions) => {
 				ctx: this,
 				message: opts.message,
 				value:
-					this.state === "submit" || this.state === "cancel"
+					this.state === 'submit' || this.state === 'cancel'
 						? this.value
 							? active
 							: inactive
-						: `${opt(!!this.value, active)} ${color.dim("/")} ${opt(
-								!this.value,
-								inactive
-						  )}`,
+						: `${opt(!!this.value, active)} ${color.dim('/')} ${opt(!this.value, inactive)}`,
 				valueWithCursor: undefined,
 			});
 		},
@@ -302,19 +289,16 @@ export interface SelectOptions<Value> {
 }
 
 export const select = <Value>(opts: SelectOptions<Value>) => {
-	const opt = (
-		option: Option<Value>,
-		state: "inactive" | "active" | "selected" | "cancelled"
-	) => {
+	const opt = (option: Option<Value>, state: 'inactive' | 'active' | 'selected' | 'cancelled') => {
 		const label = option.label ?? String(option.value);
 		switch (state) {
-			case "selected":
+			case 'selected':
 				return `${color.dim(label)}`;
-			case "active":
+			case 'active':
 				return `${color.green(S_RADIO_ACTIVE)} ${label} ${
-					option.hint ? color.dim(`(${option.hint})`) : ""
+					option.hint ? color.dim(`(${option.hint})`) : ''
 				}`;
-			case "cancelled":
+			case 'cancelled':
 				return `${color.strikethrough(color.dim(label))}`;
 			default:
 				return `${color.dim(S_RADIO_INACTIVE)} ${color.dim(label)}`;
@@ -327,19 +311,19 @@ export const select = <Value>(opts: SelectOptions<Value>) => {
 		render() {
 			let value: string;
 			switch (this.state) {
-				case "submit":
-					value = opt(this.options[this.cursor], "selected");
+				case 'submit':
+					value = opt(this.options[this.cursor], 'selected');
 					break;
-				case "cancel":
-					value = opt(this.options[this.cursor], "cancelled");
+				case 'cancel':
+					value = opt(this.options[this.cursor], 'cancelled');
 					break;
 				default: {
 					value = limitOptions({
 						cursor: this.cursor,
 						options: this.options,
 						maxItems: opts.maxItems,
-						style: (item, active) => opt(item, active ? "active" : "inactive"),
-					}).join("\n");
+						style: (item, active) => opt(item, active ? 'active' : 'inactive'),
+					}).join('\n');
 					break;
 				}
 			}
@@ -356,50 +340,46 @@ export const select = <Value>(opts: SelectOptions<Value>) => {
 export const selectKey = <Value extends string>(opts: SelectOptions<Value>) => {
 	const opt = (
 		option: Option<Value>,
-		state: "inactive" | "active" | "selected" | "cancelled" = "inactive"
+		state: 'inactive' | 'active' | 'selected' | 'cancelled' = 'inactive'
 	) => {
 		const label = option.label ?? String(option.value);
-		if (state === "selected") {
+		if (state === 'selected') {
 			return `${color.dim(label)}`;
 		}
-		if (state === "cancelled") {
+		if (state === 'cancelled') {
 			return `${color.strikethrough(color.dim(label))}`;
 		}
-		if (state === "active") {
+		if (state === 'active') {
 			return `${color.bgCyan(color.gray(` ${option.value} `))} ${label} ${
-				option.hint ? color.dim(`(${option.hint})`) : ""
+				option.hint ? color.dim(`(${option.hint})`) : ''
 			}`;
 		}
 		return `${color.gray(
 			color.bgWhite(color.inverse(` ${option.value} `))
-		)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ""}`;
+		)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''}`;
 	};
 
 	return new SelectKeyPrompt({
 		options: opts.options,
 		initialValue: opts.initialValue,
 		render() {
-			const title = `${color.gray(S_BAR)}\n${symbol(this.state)} ${
-				opts.message
-			}\n`;
+			const title = `${color.gray(S_BAR)}\n${symbol(this.state)} ${opts.message}`;
 
 			switch (this.state) {
-				case "submit":
-					return `${title}${color.gray(S_BAR)}  ${opt(
+				case 'submit':
+					return `${title}\n${color.gray(S_BAR)}  ${opt(
 						// biome-ignore lint/style/noNonNullAssertion: <explanation>
 						this.options.find((opt) => opt.value === this.value)!,
-						"selected"
+						'selected'
 					)}`;
-				case "cancel":
-					return `${title}${color.gray(S_BAR)}  ${opt(
+				case 'cancel':
+					return `${title}\n${color.gray(S_BAR)}  ${opt(
 						this.options[0],
-						"cancelled"
+						'cancelled'
 					)}\n${color.gray(S_BAR)}`;
 				default:
-					return `${title}${color.cyan(S_BAR)}  ${this.options
-						.map((option, i) =>
-							opt(option, i === this.cursor ? "active" : "inactive")
-						)
+					return `${title}\n${color.cyan(S_BAR)}  ${this.options
+						.map((option, i) => opt(option, i === this.cursor ? 'active' : 'inactive'))
 						.join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`;
 			}
 		},
@@ -417,32 +397,26 @@ export interface MultiSelectOptions<Value> {
 export const multiselect = <Value>(opts: MultiSelectOptions<Value>) => {
 	const opt = (
 		option: Option<Value>,
-		state:
-			| "inactive"
-			| "active"
-			| "selected"
-			| "active-selected"
-			| "submitted"
-			| "cancelled"
+		state: 'inactive' | 'active' | 'selected' | 'active-selected' | 'submitted' | 'cancelled'
 	) => {
 		const label = option.label ?? String(option.value);
-		if (state === "active") {
+		if (state === 'active') {
 			return `${color.cyan(S_CHECKBOX_ACTIVE)} ${label} ${
-				option.hint ? color.dim(`(${option.hint})`) : ""
+				option.hint ? color.dim(`(${option.hint})`) : ''
 			}`;
 		}
-		if (state === "selected") {
+		if (state === 'selected') {
 			return `${color.green(S_CHECKBOX_SELECTED)} ${color.dim(label)}`;
 		}
-		if (state === "cancelled") {
+		if (state === 'cancelled') {
 			return `${color.strikethrough(color.dim(label))}`;
 		}
-		if (state === "active-selected") {
+		if (state === 'active-selected') {
 			return `${color.green(S_CHECKBOX_SELECTED)} ${label} ${
-				option.hint ? color.dim(`(${option.hint})`) : ""
+				option.hint ? color.dim(`(${option.hint})`) : ''
 			}`;
 		}
-		if (state === "submitted") {
+		if (state === 'submitted') {
 			return `${color.dim(label)}`;
 		}
 		return `${color.dim(S_CHECKBOX_INACTIVE)} ${color.dim(label)}`;
@@ -457,10 +431,8 @@ export const multiselect = <Value>(opts: MultiSelectOptions<Value>) => {
 			if (this.required && selected.length === 0)
 				return `Please select at least one option.\n${color.reset(
 					color.dim(
-						`Press ${color.gray(
-							color.bgWhite(color.inverse(" space "))
-						)} to select, ${color.gray(
-							color.bgWhite(color.inverse(" enter "))
+						`Press ${color.gray(color.bgWhite(color.inverse(' space ')))} to select, ${color.gray(
+							color.bgWhite(color.inverse(' enter '))
 						)} to submit`
 					)
 				)}`;
@@ -472,43 +444,43 @@ export const multiselect = <Value>(opts: MultiSelectOptions<Value>) => {
 			const styleOption = (option: Option<Value>, active: boolean) => {
 				const selected = this.value.includes(option.value);
 				if (active && selected) {
-					return opt(option, "active-selected");
+					return opt(option, 'active-selected');
 				}
 				if (selected) {
-					return opt(option, "selected");
+					return opt(option, 'selected');
 				}
-				return opt(option, active ? "active" : "inactive");
+				return opt(option, active ? 'active' : 'inactive');
 			};
 
 			switch (this.state) {
-				case "submit": {
+				case 'submit': {
 					value =
 						this.options
 							.filter(({ value }) => this.value.includes(value))
-							.map((option) => opt(option, "submitted"))
-							.join(color.dim(", ")) || color.dim("none");
+							.map((option) => opt(option, 'submitted'))
+							.join(color.dim(', ')) || color.dim('none');
 					break;
 				}
-				case "cancel": {
+				case 'cancel': {
 					value =
 						this.options
 							.filter(({ value }) => this.value.includes(value))
-							.map((option) => opt(option, "cancelled"))
-							.join(color.dim(", ")) ?? "";
+							.map((option) => opt(option, 'cancelled'))
+							.join(color.dim(', ')) ?? '';
 					break;
 				}
-				case "error": {
+				case 'error': {
 					error = format(
 						this.error
-							.split("\n")
+							.split('\n')
 							.map((ln, i) => (i === 0 ? color.yellow(ln) : ln))
-							.join("\n"),
+							.join('\n'),
 						{
 							firstLine: {
 								start: color.yellow(S_BAR_END),
 							},
 							default: {
-								start: color.hidden("-"),
+								start: color.hidden('-'),
 							},
 						}
 					);
@@ -517,7 +489,7 @@ export const multiselect = <Value>(opts: MultiSelectOptions<Value>) => {
 						maxItems: opts.maxItems,
 						options: this.options,
 						style: styleOption,
-					}).join("\n");
+					}).join('\n');
 					break;
 				}
 				default: {
@@ -526,7 +498,7 @@ export const multiselect = <Value>(opts: MultiSelectOptions<Value>) => {
 						maxItems: opts.maxItems,
 						options: this.options,
 						style: styleOption,
-					}).join("\n");
+					}).join('\n');
 					break;
 				}
 			}
@@ -548,59 +520,52 @@ export interface GroupMultiSelectOptions<Value> {
 	required?: boolean;
 	cursorAt?: Value;
 }
-export const groupMultiselect = <Value>(
-	opts: GroupMultiSelectOptions<Value>
-) => {
+export const groupMultiselect = <Value>(opts: GroupMultiSelectOptions<Value>) => {
 	const opt = (
 		option: Option<Value>,
 		state:
-			| "inactive"
-			| "active"
-			| "selected"
-			| "active-selected"
-			| "group-active"
-			| "group-active-selected"
-			| "submitted"
-			| "cancelled",
+			| 'inactive'
+			| 'active'
+			| 'selected'
+			| 'active-selected'
+			| 'group-active'
+			| 'group-active-selected'
+			| 'submitted'
+			| 'cancelled',
 		options: Option<Value>[] = []
 	) => {
 		const label = option.label ?? String(option.value);
-		const isItem = typeof (option as any).group === "string";
-		const next =
-			isItem && (options[options.indexOf(option) + 1] ?? { group: true });
+		const isItem = typeof (option as any).group === 'string';
+		const next = isItem && (options[options.indexOf(option) + 1] ?? { group: true });
 		const isLast = isItem && (next as any).group === true;
-		const prefix = isItem ? `${isLast ? S_BAR_END : S_BAR} ` : "";
+		const prefix = isItem ? `${isLast ? S_BAR_END : S_BAR} ` : '';
 
-		if (state === "active") {
+		if (state === 'active') {
 			return `${color.dim(prefix)}${color.cyan(S_CHECKBOX_ACTIVE)} ${label} ${
-				option.hint ? color.dim(`(${option.hint})`) : ""
+				option.hint ? color.dim(`(${option.hint})`) : ''
 			}`;
 		}
-		if (state === "group-active") {
+		if (state === 'group-active') {
 			return `${prefix}${color.cyan(S_CHECKBOX_ACTIVE)} ${color.dim(label)}`;
 		}
-		if (state === "group-active-selected") {
+		if (state === 'group-active-selected') {
 			return `${prefix}${color.green(S_CHECKBOX_SELECTED)} ${color.dim(label)}`;
 		}
-		if (state === "selected") {
-			return `${color.dim(prefix)}${color.green(
-				S_CHECKBOX_SELECTED
-			)} ${color.dim(label)}`;
+		if (state === 'selected') {
+			return `${color.dim(prefix)}${color.green(S_CHECKBOX_SELECTED)} ${color.dim(label)}`;
 		}
-		if (state === "cancelled") {
+		if (state === 'cancelled') {
 			return `${color.strikethrough(color.dim(label))}`;
 		}
-		if (state === "active-selected") {
+		if (state === 'active-selected') {
 			return `${color.dim(prefix)}${color.green(
 				S_CHECKBOX_SELECTED
-			)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ""}`;
+			)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''}`;
 		}
-		if (state === "submitted") {
+		if (state === 'submitted') {
 			return `${color.dim(label)}`;
 		}
-		return `${color.dim(prefix)}${color.dim(S_CHECKBOX_INACTIVE)} ${color.dim(
-			label
-		)}`;
+		return `${color.dim(prefix)}${color.dim(S_CHECKBOX_INACTIVE)} ${color.dim(label)}`;
 	};
 
 	return new GroupMultiSelectPrompt({
@@ -612,10 +577,8 @@ export const groupMultiselect = <Value>(
 			if (this.required && selected.length === 0)
 				return `Please select at least one option.\n${color.reset(
 					color.dim(
-						`Press ${color.gray(
-							color.bgWhite(color.inverse(" space "))
-						)} to select, ${color.gray(
-							color.bgWhite(color.inverse(" enter "))
+						`Press ${color.gray(color.bgWhite(color.inverse(' space ')))} to select, ${color.gray(
+							color.bgWhite(color.inverse(' enter '))
 						)} to submit`
 					)
 				)}`;
@@ -623,72 +586,63 @@ export const groupMultiselect = <Value>(
 		render() {
 			const symbol = (state: State) => {
 				switch (state) {
-					case "initial":
-					case "active":
+					case 'initial':
+					case 'active':
 						return color.cyan(S_STEP_ACTIVE);
-					case "cancel":
+					case 'cancel':
 						return color.red(S_STEP_CANCEL);
-					case "error":
+					case 'error':
 						return color.yellow(S_STEP_ERROR);
-					case "submit":
+					case 'submit':
 						return color.green(S_STEP_SUBMIT);
 				}
 			};
 
-			const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${
-				opts.message
-			}\n`;
+			const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}`;
 
 			switch (this.state) {
-				case "submit": {
+				case 'submit': {
 					return `${title}\n${color.gray(S_BAR)}  ${this.options
 						.filter(({ value }) => this.value.includes(value))
-						.map((option) => opt(option, "submitted"))
-						.join(color.dim(", "))}`;
+						.map((option) => opt(option, 'submitted'))
+						.join(color.dim(', '))}`;
 				}
-				case "cancel": {
+				case 'cancel': {
 					const label = this.options
 						.filter(({ value }) => this.value.includes(value))
-						.map((option) => opt(option, "cancelled"))
-						.join(color.dim(", "));
+						.map((option) => opt(option, 'cancelled'))
+						.join(color.dim(', '));
 					return `${title}\n${color.gray(S_BAR)}  ${
-						label.trim() ? `${label}\n${color.gray(S_BAR)}` : ""
+						label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
 					}`;
 				}
-				case "error": {
+				case 'error': {
 					const footer = this.error
-						.split("\n")
+						.split('\n')
 						.map((ln, i) =>
-							i === 0
-								? `${color.yellow(S_BAR_END)}  ${color.yellow(ln)}`
-								: `   ${ln}`
+							i === 0 ? `${color.yellow(S_BAR_END)}  ${color.yellow(ln)}` : `   ${ln}`
 						)
-						.join("\n");
+						.join('\n');
 					return `${title}\n${color.yellow(S_BAR)}  ${this.options
 						.map((option, i, options) => {
 							const selected =
 								this.value.includes(option.value) ||
-								(option.group === true &&
-									this.isGroupSelected(`${option.value}`));
+								(option.group === true && this.isGroupSelected(`${option.value}`));
 							const active = i === this.cursor;
 							const groupActive =
 								!active &&
-								typeof option.group === "string" &&
+								typeof option.group === 'string' &&
 								this.options[this.cursor].value === option.group;
 							if (groupActive) {
-								return opt(
-									option,
-									selected ? "group-active-selected" : "group-active",
-									options
-								);
+								return opt(option, selected ? 'group-active-selected' : 'group-active', options);
 							}
 							if (active && selected) {
-								return opt(option, "active-selected", options);
+								return opt(option, 'active-selected', options);
 							}
 							if (selected) {
-								return opt(option, "selected", options);
+								return opt(option, 'selected', options);
 							}
-							return opt(option, active ? "active" : "inactive", options);
+							return opt(option, active ? 'active' : 'inactive', options);
 						})
 						.join(`\n${color.yellow(S_BAR)}  `)}\n${footer}\n`;
 				}
@@ -697,27 +651,22 @@ export const groupMultiselect = <Value>(
 						.map((option, i, options) => {
 							const selected =
 								this.value.includes(option.value) ||
-								(option.group === true &&
-									this.isGroupSelected(`${option.value}`));
+								(option.group === true && this.isGroupSelected(`${option.value}`));
 							const active = i === this.cursor;
 							const groupActive =
 								!active &&
-								typeof option.group === "string" &&
+								typeof option.group === 'string' &&
 								this.options[this.cursor].value === option.group;
 							if (groupActive) {
-								return opt(
-									option,
-									selected ? "group-active-selected" : "group-active",
-									options
-								);
+								return opt(option, selected ? 'group-active-selected' : 'group-active', options);
 							}
 							if (active && selected) {
-								return opt(option, "active-selected", options);
+								return opt(option, 'active-selected', options);
 							}
 							if (selected) {
-								return opt(option, "selected", options);
+								return opt(option, 'selected', options);
 							}
-							return opt(option, active ? "active" : "inactive", options);
+							return opt(option, active ? 'active' : 'inactive', options);
 						})
 						.join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`;
 				}
@@ -726,7 +675,7 @@ export const groupMultiselect = <Value>(
 	}).prompt() as Promise<Value[] | symbol>;
 };
 
-export const note = (message = "", title = "") => {
+export const note = (message = '', title = '') => {
 	const maxWidth = Math.floor((process.stdout.columns ?? 80) * 0.8);
 	const lines = format(message, {
 		default: {
@@ -745,23 +694,23 @@ export const note = (message = "", title = "") => {
 		`${color.green(S_STEP_SUBMIT)}  ${color.reset(title)} ${color.gray(
 			S_BAR_H.repeat(Math.max(len - titleLen - 3, 0)) + S_CORNER_TOP_RIGHT
 		)}`,
-		color.gray(S_BAR + " ".repeat(len) + S_BAR),
+		color.gray(S_BAR + ' '.repeat(len) + S_BAR),
 		lines
 			.map(
 				(line) =>
 					line +
-					" ".repeat(Math.max(len + (unicode ? 2 : 1) - strLength(line), 0)) +
+					' '.repeat(Math.max(len + (unicode ? 2 : 1) - strLength(line), 0)) +
 					color.gray(S_BAR)
 			)
-			.join("\n"),
-		color.gray(S_BAR + " ".repeat(len) + S_BAR),
+			.join('\n'),
+		color.gray(S_BAR + ' '.repeat(len) + S_BAR),
 		color.gray(S_CONNECT_LEFT + S_BAR_H.repeat(len) + S_CORNER_BOTTOM_RIGHT),
-		"",
-	].join("\n");
+		'',
+	].join('\n');
 	process.stdout.write(noteBox);
 };
 
-export const cancel = (message = "") => {
+export const cancel = (message = '') => {
 	process.stdout.write(
 		`${format(message, {
 			default: {
@@ -775,7 +724,7 @@ export const cancel = (message = "") => {
 	);
 };
 
-export const intro = (title = "") => {
+export const intro = (title = '') => {
 	process.stdout.write(
 		`${format(title, {
 			firstLine: {
@@ -788,7 +737,7 @@ export const intro = (title = "") => {
 	);
 };
 
-export const outro = (message = "") => {
+export const outro = (message = '') => {
 	process.stdout.write(
 		[
 			color.gray(S_BAR),
@@ -800,9 +749,9 @@ export const outro = (message = "") => {
 					start: color.gray(S_BAR_END),
 				},
 			}),
-			"",
-			"",
-		].join("\n")
+			'',
+			'',
+		].join('\n')
 	);
 };
 
@@ -810,10 +759,7 @@ export type LogMessageOptions = {
 	symbol?: string;
 };
 export const log = {
-	message: (
-		message = "",
-		{ symbol = color.gray(S_BAR) }: LogMessageOptions = {}
-	) => {
+	message: (message = '', { symbol = color.gray(S_BAR) }: LogMessageOptions = {}) => {
 		process.stdout.write(
 			`${format(message, {
 				firstLine: {
@@ -857,14 +803,14 @@ export const log = {
 };
 
 export const spinner = () => {
-	const frames = unicode ? ["◒", "◐", "◓", "◑"] : ["•", "o", "O", "0"];
+	const frames = unicode ? ['◒', '◐', '◓', '◑'] : ['•', 'o', 'O', '0'];
 	const delay = unicode ? 80 : 120;
-	const isCI = process.env.CI === "true";
+	const isCI = process.env.CI === 'true';
 
 	let unblock: () => void;
 	let loop: NodeJS.Timeout;
 	let isSpinnerActive = false;
-	let _message = "";
+	let _message = '';
 	let _prevMessage: string | undefined = undefined;
 
 	const formatMessage = (symbol: string, msg: string): string => {
@@ -880,14 +826,14 @@ export const spinner = () => {
 
 	const clearPrevMessage = (): void => {
 		if (_prevMessage === undefined) return;
-		if (isCI) process.stdout.write("\n");
+		if (isCI) process.stdout.write('\n');
 		const linesCounter = _prevMessage.split(/\n/g).length;
 		process.stdout.write(cursor.move(-999, (linesCounter - 1) * -1));
 		process.stdout.write(erase.down(linesCounter));
 	};
 
 	const handleExit = (code: number) => {
-		const msg = code > 1 ? "Something went wrong" : "Canceled";
+		const msg = code > 1 ? 'Something went wrong' : 'Canceled';
 		if (isSpinnerActive) stop(msg, code);
 	};
 
@@ -896,28 +842,28 @@ export const spinner = () => {
 
 	const registerHooks = () => {
 		// Reference: https://nodejs.org/api/process.html#event-uncaughtexception
-		process.on("uncaughtExceptionMonitor", errorEventHandler);
+		process.on('uncaughtExceptionMonitor', errorEventHandler);
 		// Reference: https://nodejs.org/api/process.html#event-unhandledrejection
-		process.on("unhandledRejection", errorEventHandler);
+		process.on('unhandledRejection', errorEventHandler);
 		// Reference Signal Events: https://nodejs.org/api/process.html#signal-events
-		process.on("SIGINT", signalEventHandler);
-		process.on("SIGTERM", signalEventHandler);
-		process.on("exit", handleExit);
+		process.on('SIGINT', signalEventHandler);
+		process.on('SIGTERM', signalEventHandler);
+		process.on('exit', handleExit);
 	};
 
 	const clearHooks = () => {
-		process.removeListener("uncaughtExceptionMonitor", errorEventHandler);
-		process.removeListener("unhandledRejection", errorEventHandler);
-		process.removeListener("SIGINT", signalEventHandler);
-		process.removeListener("SIGTERM", signalEventHandler);
-		process.removeListener("exit", handleExit);
+		process.removeListener('uncaughtExceptionMonitor', errorEventHandler);
+		process.removeListener('unhandledRejection', errorEventHandler);
+		process.removeListener('SIGINT', signalEventHandler);
+		process.removeListener('SIGTERM', signalEventHandler);
+		process.removeListener('exit', handleExit);
 	};
 
 	const parseMessage = (msg: string): string => {
-		return msg.replace(/\.+$/, "");
+		return msg.replace(/\.+$/, '');
 	};
 
-	const start = (msg = ""): void => {
+	const start = (msg = ''): void => {
 		isSpinnerActive = true;
 		unblock = block();
 		_message = parseMessage(msg);
@@ -932,9 +878,7 @@ export const spinner = () => {
 			clearPrevMessage();
 			_prevMessage = _message;
 			const frame = color.magenta(frames[frameIndex]);
-			const loadingDots = isCI
-				? "..."
-				: ".".repeat(Math.floor(dotsTimer)).slice(0, 3);
+			const loadingDots = isCI ? '...' : '.'.repeat(Math.floor(dotsTimer)).slice(0, 3);
 			_prevMessage = _message;
 			process.stdout.write(formatMessage(frame, _message + loadingDots));
 			frameIndex = frameIndex + 1 < frames.length ? frameIndex + 1 : 0;
@@ -942,7 +886,7 @@ export const spinner = () => {
 		}, delay);
 	};
 
-	const stop = (msg = "", code = 0): void => {
+	const stop = (msg = '', code = 0): void => {
 		isSpinnerActive = false;
 		clearInterval(loop);
 		clearPrevMessage();
@@ -950,15 +894,15 @@ export const spinner = () => {
 			code === 0
 				? color.green(S_STEP_SUBMIT)
 				: code === 1
-				? color.red(S_STEP_CANCEL)
-				: color.red(S_STEP_ERROR);
+					? color.red(S_STEP_CANCEL)
+					: color.red(S_STEP_ERROR);
 		_message = parseMessage(msg ?? _message);
 		process.stdout.write(`${step}  ${_message}\n`);
 		clearHooks();
 		unblock();
 	};
 
-	const message = (msg = ""): void => {
+	const message = (msg = ''): void => {
 		_message = parseMessage(msg || _message);
 	};
 
@@ -1013,8 +957,8 @@ export const group = async <T>(
 		// Pass the results to the onCancel function
 		// so the user can decide what to do with the results
 		// TODO: Switch to callback within core to avoid isCancel Fn
-		if (typeof opts?.onCancel === "function" && isCancel(result)) {
-			results[name] = "canceled";
+		if (typeof opts?.onCancel === 'function' && isCancel(result)) {
+			results[name] = 'canceled';
 			opts.onCancel({ results });
 			continue;
 		}
@@ -1033,9 +977,7 @@ export type Task = {
 	/**
 	 * Task function
 	 */
-	task: (
-		message: (string: string) => void
-	) => string | Promise<string> | void | Promise<void>;
+	task: (message: (string: string) => void) => string | Promise<string> | void | Promise<void>;
 
 	/**
 	 * If enabled === false the task will be skipped

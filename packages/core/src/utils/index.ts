@@ -101,12 +101,12 @@ export function strLength(str: string): number {
 	}
 
 	// Remove ANSI escape codes from the input string.
-	str = stripAnsi(str);
+	const stripedStr = stripAnsi(str);
 
 	let length = 0;
 
-	for (let i = 0; i < str.length; i++) {
-		const code = str.codePointAt(i);
+	for (let i = 0; i < stripedStr.length; i++) {
+		const code = stripedStr.codePointAt(i);
 
 		if (!code || isControlCharacter(code) || isCombiningCharacter(code)) {
 			continue;
