@@ -12,7 +12,6 @@
     "start": "jiti ./index.ts",
     "spinner": "jiti ./spinner.ts",
     "spinner-ci": "npx cross-env CI=\"true\" jiti ./spinner-ci.ts",
-    "changesets": "jiti ./changesets.ts",
     "workflow": "jiti ./workflow.ts"
   },
   "devDependencies": {

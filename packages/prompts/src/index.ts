@@ -760,6 +760,7 @@ export type PromptGroupAwaitedReturn<T> = Prettify<{
 	[P in keyof T]: PromptAwaitedReturn<T[P]>;
 }>;
 
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
 export type PromptWithOptions<TResults, TResult, TOptions extends Record<string, unknown> = {}> = (
 	opts: Prettify<
 		{
@@ -769,7 +770,7 @@ export type PromptWithOptions<TResults, TResult, TOptions extends Record<string,
 ) => TResult;
 
 export type PromptGroup<T> = {
-	[P in keyof T]: PromptWithOptions<Partial<Omit<T, P>>, void | Promise<T[P] | void>>;
+	[P in keyof T]: PromptWithOptions<Partial<Omit<T, P>>, undefined | Promise<T[P] | undefined>>;
 };
 
 export interface PromptGroupOptions<T> {
@@ -865,6 +866,7 @@ type WorkflowStep<TName extends string, TResults, TResult = unknown> = {
 	condition?: PromptWithOptions<TResults, boolean>;
 };
 
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
 class WorkflowBuilder<TResults extends Record<string, unknown> = {}> {
 	private results: TResults = {} as TResults;
 	private steps: WorkflowStep<string, TResults>[] = [];

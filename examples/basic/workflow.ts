@@ -6,7 +6,7 @@ import * as p from '@clack/prompts';
 		.step('name', () => p.text({ message: 'What is your package name?' }))
 		.step('type', () =>
 			p.select({
-				message: `Pick a project type:`,
+				message: 'Pick a project type:',
 				initialValue: 'ts',
 				maxItems: 5,
 				options: [
